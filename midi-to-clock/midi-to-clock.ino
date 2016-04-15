@@ -51,13 +51,13 @@ void stopClock() {
 byte data;
 
 void processMIDI() {
-    while (Serial.available() > 0) {
-      data = Serial.read();
-      if (data == 250) startClock();
-      else if (data == 252) stopClock();
-      else if (data == 251) continueClock();
-      else if ((data == 248) && isPlaying) processClock();
-    }
+  while (Serial.available() > 0) {
+    data = Serial.read();
+    if (data == 250) startClock();
+    else if (data == 252) stopClock();
+    else if (data == 251) continueClock();
+    else if ((data == 248) && isPlaying) processClock();
+  }
 }
 
 unsigned long currentMillis = 0;
