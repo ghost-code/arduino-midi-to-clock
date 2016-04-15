@@ -32,7 +32,7 @@ void processClock() {
   if (midiClockCount % clockDivision == 0) {
     digitalWrite(clockOutput1, HIGH);
     clockOutput1State = true;
-	  lastClock2Millis = millis();
+    lastClock2Millis = millis();
   }
 
   if (midiClockCount % 24 == 0) {
@@ -76,11 +76,11 @@ unsigned long currentMillis = 0;
 void updateClockOutputs() {
   currentMillis = millis();
   if (currentMillis - lastClock1Millis >= 5 && clockOutput1State) {
-    pinMode(clockOutput1, LOW);
+    digitalWrite(clockOutput1, LOW);
     clockOutput1State = false;
   }
   if (currentMillis - lastClock2Millis >= 5 && clockOutput2State) {
-    pinMode(clockOutput2, LOW);
+    digitalWrite(clockOutput2, LOW);
     clockOutput2State = false;
   }
 }
