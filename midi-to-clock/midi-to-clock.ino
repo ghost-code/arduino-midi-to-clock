@@ -1,4 +1,4 @@
-#include <TimerOne.h>
+// midi-to-clock
 
 // Pins
 int clockOutput1 = 6;
@@ -14,10 +14,10 @@ bool divisionSwitchState1 = false;
 bool divisionSwitchState2 = false;
 
 void updateDivisionMode() {
-  switchState1 = digitalRead(divisionInput1);
-  switchState2 = digitalRead(divisionInput2);
-  if (switchState1 && switchState2) clockDivision = 6; // up - sixteenth
-  else if (switchState2) clockDivision = 12; // middle - eigth
+  divisionSwitchState1 = digitalRead(divisionSwitch1);
+  divisionSwitchState2 = digitalRead(divisionSwitch2);
+  if (divisionSwitchState1 && divisionSwitchState2) clockDivision = 6; // up - sixteenth
+  else if (divisionSwitchState2) clockDivision = 12; // middle - eigth
   else clockDivision = 24; // down - quarter
 }
 
@@ -28,7 +28,7 @@ unsigned long lastClockMillis2 = 0;
 void processClock() {
   if (midiClockCount % clockDivision == 0) {
     digitalWrite(clockOutput1, HIGH);
-	lastClockMillis1 = millis()
+	lastClockMillis1 = millis();
   }
   // reset clock count every whole
   midiClockCount = (midiClockCount + 1) % 96;
