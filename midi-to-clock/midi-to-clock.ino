@@ -10,26 +10,37 @@ bool isPlaying = false;
 
 int clockDivision = 0;
 
-bool divisionSwitchState1 = false;
-bool divisionSwitchState2 = false;
+bool divisionSwitch1State = false;
+bool divisionSwitch2State = false;
 
 void updateDivisionMode() {
-  divisionSwitchState1 = digitalRead(divisionSwitch1);
-  divisionSwitchState2 = digitalRead(divisionSwitch2);
-  if (divisionSwitchState1 && divisionSwitchState2) clockDivision = 6; // up - sixteenth
-  else if (divisionSwitchState2) clockDivision = 12; // middle - eigth
+  divisionSwitch1State = digitalRead(divisionSwitch1);
+  divisionSwitch2State = digitalRead(divisionSwitch2);
+  if (divisionSwitch1State && divisionSwitch2State) clockDivision = 6; // up - sixteenth
+  else if (divisionSwitch2State) clockDivision = 12; // middle - eigth
   else clockDivision = 24; // down - quarter
 }
 
 int midiClockCount = 0;
-unsigned long lastClockMillis1 = 0;
-unsigned long lastClockMillis2 = 0;
+unsigned long lastClock1Millis = 0;
+unsigned long lastClock2Millis = 0;
+
+bool clockOutput1State = false;
+bool clockOutput2State = false;
 
 void processClock() {
   if (midiClockCount % clockDivision == 0) {
     digitalWrite(clockOutput1, HIGH);
-	lastClockMillis1 = millis();
+    clockOutput1State = true;
+	  lastClock2Millis = millis();
   }
+
+  if (midiClockCount % 24 == 0) {
+    digitalWrite(clockOutput2, HIGH);
+    clockOutput2State = true;
+    lastClock2Millis = millis();
+  }
+  
   // reset clock count every whole
   midiClockCount = (midiClockCount + 1) % 96;
 }
@@ -64,11 +75,13 @@ unsigned long currentMillis = 0;
 
 void updateClockOutputs() {
   currentMillis = millis();
-  if (currentMillis - lastClockMillis1 >= 5) {
+  if (currentMillis - lastClock1Millis >= 5 && clockOutput1State) {
     pinMode(clockOutput1, LOW);
+    clockOutput1State = false;
   }
-  if (currentMillis - lastClockMillis2 >= 5) {
+  if (currentMillis - lastClock2Millis >= 5 && clockOutput2State) {
     pinMode(clockOutput2, LOW);
+    clockOutput2State = false;
   }
 }
 
