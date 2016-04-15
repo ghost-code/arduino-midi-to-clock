@@ -17,8 +17,8 @@ void updateDivisionMode() {
   switchState1 = digitalRead(divisionInput1);
   switchState2 = digitalRead(divisionInput2);
   if (switchState1 && switchState2) clockDivision = 6; // up - sixteenth
-  else if (switchState2)            clockDivision = 12; // middle - eigth
-  else 								              clockDivision = 24; // down - quarter
+  else if (switchState2) clockDivision = 12; // middle - eigth
+  else clockDivision = 24; // down - quarter
 }
 
 int midiClockCount = 0;
