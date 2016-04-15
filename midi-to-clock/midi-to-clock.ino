@@ -63,13 +63,13 @@ void processMIDI() {
 unsigned long currentMillis = 0;
 
 void updateClockOutputs() {
-	currentMillis = millis();
-	if (currentMillis - lastClockMillis1 >= 10) {
-		pinMode(clockOutput1, LOW);
-	}
-	if (currentMillis - lastClockMillis2 >= 10) {
-		pinMode(clockOutput2, LOW);
-	}
+  currentMillis = millis();
+  if (currentMillis - lastClockMillis1 >= 5) {
+    pinMode(clockOutput1, LOW);
+  }
+  if (currentMillis - lastClockMillis2 >= 5) {
+    pinMode(clockOutput2, LOW);
+  }
 }
 
 void setup() {
