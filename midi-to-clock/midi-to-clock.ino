@@ -1,27 +1,27 @@
 // midi-to-clock
 
 // Pins
-int clockOutput1 = 6;
-int clockOutput2 = 7;
-int divisionSwitch1 = 2;
-int divisionSwitch2 = 4;
+#define CLOCK_OUTPUT_1 11
+#define CLOCK_OUTPUT_2 10
+#define DIVISION_SWITCH_1 7
+#define DIVISION_SWITCH_2 8
 
 bool isPlaying = false;
 
-int clockDivision = 0;
+uint8_t clockDivision = 24;
 
 bool divisionSwitch1State = false;
 bool divisionSwitch2State = false;
 
 void updateDivisionMode() {
-  divisionSwitch1State = digitalRead(divisionSwitch1);
-  divisionSwitch2State = digitalRead(divisionSwitch2);
+  divisionSwitch1State = digitalRead(DIVISION_SWITCH_1);
+  divisionSwitch2State = digitalRead(DIVISION_SWITCH_2);
   if (divisionSwitch1State && divisionSwitch2State) clockDivision = 6; // up - sixteenth
   else if (divisionSwitch2State) clockDivision = 12; // middle - eigth
   else clockDivision = 24; // down - quarter
 }
 
-int midiClockCount = 0;
+uint8_t midiClockCount = 0;
 unsigned long lastClock1Millis = 0;
 unsigned long lastClock2Millis = 0;
 
@@ -30,13 +30,13 @@ bool clockOutput2State = false;
 
 void processClock() {
   if (midiClockCount % clockDivision == 0) {
-    digitalWrite(clockOutput1, HIGH);
+    digitalWrite(CLOCK_OUTPUT_1, HIGH);
     clockOutput1State = true;
-    lastClock2Millis = millis();
+    lastClock1Millis = millis();
   }
 
   if (midiClockCount % 24 == 0) {
-    digitalWrite(clockOutput2, HIGH);
+    digitalWrite(CLOCK_OUTPUT_2, HIGH);
     clockOutput2State = true;
     lastClock2Millis = millis();
   }
@@ -76,21 +76,21 @@ unsigned long currentMillis = 0;
 void updateClockOutputs() {
   currentMillis = millis();
   if (currentMillis - lastClock1Millis >= 5 && clockOutput1State) {
-    digitalWrite(clockOutput1, LOW);
+    digitalWrite(CLOCK_OUTPUT_1, LOW);
     clockOutput1State = false;
   }
   if (currentMillis - lastClock2Millis >= 5 && clockOutput2State) {
-    digitalWrite(clockOutput2, LOW);
+    digitalWrite(CLOCK_OUTPUT_2, LOW);
     clockOutput2State = false;
   }
 }
 
 void setup() {
   Serial.begin(31250);
-  pinMode(clockOutput1, OUTPUT);
-  pinMode(clockOutput2, OUTPUT);
-  pinMode(divisionSwitch1, INPUT);
-  pinMode(divisionSwitch2, INPUT);
+  pinMode(CLOCK_OUTPUT_1, OUTPUT);
+  pinMode(CLOCK_OUTPUT_2, OUTPUT);
+  pinMode(DIVISION_SWITCH_1, INPUT);
+  pinMode(DIVISION_SWITCH_2, INPUT);
 }
 
 void loop() {
