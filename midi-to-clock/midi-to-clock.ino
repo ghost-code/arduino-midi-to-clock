@@ -1,8 +1,7 @@
 // midi-to-clock
 
 // Pins
-#define CLOCK_OUTPUT_1 11
-#define CLOCK_OUTPUT_2 10
+#define CLOCK_OUTPUT_1 9
 #define DIVISION_SWITCH_1 7
 #define DIVISION_SWITCH_2 8
 
@@ -17,28 +16,20 @@ void updateDivisionMode() {
   divisionSwitch1State = digitalRead(DIVISION_SWITCH_1);
   divisionSwitch2State = digitalRead(DIVISION_SWITCH_2);
   if (divisionSwitch1State && divisionSwitch2State) clockDivision = 6; // up - sixteenth
-  else if (divisionSwitch2State) clockDivision = 12; // middle - eigth
+  else if (divisionSwitch1State || divisionSwitch2State) clockDivision = 12; // middle - eigth
   else clockDivision = 24; // down - quarter
 }
 
 uint8_t midiClockCount = 0;
 unsigned long lastClock1Millis = 0;
-unsigned long lastClock2Millis = 0;
 
 bool clockOutput1State = false;
-bool clockOutput2State = false;
 
 void processClock() {
   if (midiClockCount % clockDivision == 0) {
     digitalWrite(CLOCK_OUTPUT_1, HIGH);
     clockOutput1State = true;
     lastClock1Millis = millis();
-  }
-
-  if (midiClockCount % 24 == 0) {
-    digitalWrite(CLOCK_OUTPUT_2, HIGH);
-    clockOutput2State = true;
-    lastClock2Millis = millis();
   }
   
   // reset clock count every whole
@@ -73,22 +64,17 @@ void processMIDI() {
 
 unsigned long currentMillis = 0;
 
-void updateClockOutputs() {
+void updateClockOutput() {
   currentMillis = millis();
   if (currentMillis - lastClock1Millis >= 5 && clockOutput1State) {
     digitalWrite(CLOCK_OUTPUT_1, LOW);
     clockOutput1State = false;
-  }
-  if (currentMillis - lastClock2Millis >= 5 && clockOutput2State) {
-    digitalWrite(CLOCK_OUTPUT_2, LOW);
-    clockOutput2State = false;
   }
 }
 
 void setup() {
   Serial.begin(31250);
   pinMode(CLOCK_OUTPUT_1, OUTPUT);
-  pinMode(CLOCK_OUTPUT_2, OUTPUT);
   pinMode(DIVISION_SWITCH_1, INPUT);
   pinMode(DIVISION_SWITCH_2, INPUT);
 }
@@ -96,6 +82,6 @@ void setup() {
 void loop() {
   updateDivisionMode();
   processMIDI();
-  updateClockOutputs();
+  updateClockOutput();
 }
 
